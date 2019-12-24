@@ -66,6 +66,46 @@ function bugsRouter(app) {
         })
     });
 
+    app.put('/bug/:id', (req, res) => {
+        let bugData = {
+            bugs_title: req.body.bugs_title, 
+            bugs_image_one: req.body.bugs_image_one, 
+            bugs_image_two: req.body.bugs_image_two,
+            bugs_image_three: req.body.bugs_image_three,
+            bugs_image_four: req.body.bugs_image_four,
+            bugs_status: req.body.bugs_status,
+            bugs_severity: req.body.bugs_severity,
+            bugs_replicable: req.body.bugs_replicable,
+            bugs_created_date: req.body.bugs_created_date,
+            bugs_assigned_id: req.body.bugs_assigned_id,
+            bugs_description: req.body.bugs_description,
+            bugs_organization_id: req.body.bugs_organization_id
+        };
+        let sqlScript = "UPDATE bugs SET ? WHERE bugs_id = ?";
+
+        dbConn.query(sqlScript, [bugData, req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred" + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results})
+            }
+        })
+    });
+
+
+    app.delete('/bug/:id', (req, res) => {
+        let sqlScript = "DELETE FROM bugs WHERE bugs_id = ?";
+
+        dbConn.query(sqlScript, [req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred" + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results});
+            }
+        })
+
+    })
+
 }
 
 
