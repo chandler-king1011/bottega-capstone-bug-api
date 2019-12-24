@@ -1,0 +1,17 @@
+{
+  "name": "capstone_bug_eliminator_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon server/server.js -w server"
+  },
+  "author": "Chandler King <ckmotox356@gmail.com> (https://www.npmjs.com/~chandler_king1011)",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "nodemon": "^2.0.2"
+  }
+}
