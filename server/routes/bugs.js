@@ -7,7 +7,7 @@ dbConn = mysql.createConnection(db);
 function bugsRouter(app) {
 
     //Get all bugs for org.
-    app.get("/organization/bugs/:id", (req, res) => {
+    app.get("/bugs/organization/:id", (req, res) => {
         dbConn.query(`SELECT * FROM bugs WHERE bugs_organization_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("Failed to retrieve bugs from the database." + err);
@@ -31,7 +31,7 @@ function bugsRouter(app) {
 
     //Get bugs assigned to a specific user. 
 
-    app.get("/user/bugs/:id", (req, res) => {
+    app.get("/bugs/user/:id", (req, res) => {
         dbConn.query("SELECT * FROM bugs WHERE bugs_assigned_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);

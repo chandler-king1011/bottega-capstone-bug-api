@@ -6,11 +6,91 @@ dbConn = mysql.createConnection(db);
 
 function commentsRouter(app) {
     //get comments 
-    app.get("/bugs/comments/:id", (req, res) => {
+    app.get("/comments/bug/:id", (req, res) => {
         dbConn.query("SELECT * FROM comments WHERE comments_bugs_id = ?", [req.params.id], (err, results) => {
-            res.send(results);
+            if (err) {
+                res.send("An error occurred." + err);
+            } else{
+                res.send(results);
+            }
         });
     });
+
+    //get a specific comment
+    app.get("/comment/:id", (req, res) => {
+        dbConn.query("SELECT * FROM comments WHERE comments_id = ?", [req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred." + err);
+            } else {
+                res.send(results);
+            }
+        })
+    })
+
+    //get comments from a specific user 
+
+    app.get("/comments/user/:id", (req, res) => {
+        dbConn.query("SELECT * FROM comments WHERE comments_users_id = ?", [req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred" + err);
+            } else {
+                res.send(results);
+            }
+        })
+    })
+
+    //creating a comment 
+
+    app.post("/comments", (req, res) => {
+        let commentData = {
+            comments_users_id : req.body.comments_users_id,
+            comments_bugs_id : req.body.comments_bugs_id,
+            comments_text : req.body.comments_text,
+            comments_created_date : req.body.comments_created_date
+        }
+        let sqlScript = "INSERT INTO comments SET ?";
+        dbConn.query(sqlScript, commentData, (err, results) => {
+            if (err) {
+                res.send("An error occurred posting your comment" + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results});
+            }
+        })
+    })
+
+    //Updating a comment 
+
+    app.put("/comment/:id", (req, res) => {
+        let commentData = {
+            comments_users_id : req.body.comments_users_id,
+            comments_bugs_id : req.body.comments_bugs_id,
+            comments_text : req.body.comments_text,
+            comments_created_date : req.body.comments_created_date
+        }
+        let sqlScript = "UPDATE comments SET ? WHERE comments_id = ?";
+
+        dbConn.query(sqlScript, [commentData, req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred while updating the comment." + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results});
+            }
+        })
+    })
+
+    //Deleting a comment 
+ 
+    app.delete("/comment/:id", (req, res) => {
+        dbConn.query("DELETE FROM comments WHERE comments_id = ?", [req.params.id], (err, results) => {
+            if (err) {
+                res.send("An error occurred when deleting the bug." + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results})
+            }
+        })
+    })
+
+
 }
 
 module.exports = commentsRouter;
