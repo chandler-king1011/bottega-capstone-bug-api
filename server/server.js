@@ -4,6 +4,9 @@ const bodyparser = require('body-parser');
 
 const bugsRouter = require('./routes/bugs');
 const commentsRouter = require('./routes/comments');
+const usersRouter = require('./routes/users');
+
+
 
 
 //server set up
@@ -11,7 +14,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyparser.json());
 app.use("/api", bugsRouter);
-app.use("/api", commentsRouter)
+app.use("/api", commentsRouter);
+app.use("/api,", usersRouter);
 
 
 app.listen(port, () => {
@@ -20,6 +24,7 @@ app.listen(port, () => {
 
 bugsRouter(app);
 commentsRouter(app);
+usersRouter(app);
 
 
 

@@ -89,8 +89,6 @@ function commentsRouter(app) {
             }
         })
     })
-
-
 }
 
 module.exports = commentsRouter;
