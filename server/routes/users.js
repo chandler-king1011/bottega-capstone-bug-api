@@ -1,11 +1,16 @@
 const mysql = require('mysql');
 const { check, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+
+const saltRounds = 10;
 
 const db = require('../db');
 
 dbConn = mysql.createConnection(db);
 
 function usersRouter(app) {
+
 
     app.get("/users/organization/:id", (req, res) => {
         let sqlScript = "SELECT users_first_name, users_last_name, users_role FROM users WHERE users_organization_id = ?";
@@ -38,23 +43,39 @@ function usersRouter(app) {
 
         let {users_first_name, users_last_name, users_role, users_email, users_organization_id} = req.body;
         let users_password = req.body.users_password;
-        const sqlScript = "INSERT INTO users(users_first_name, users_last_name, users_role, users_email, users_password, users_organization_id) VALUES(?, ?, ?, ?, ?, ?)";
-        dbConn.query(sqlScript, 
-            [users_first_name,
-            users_last_name,
-            users_role, 
-            users_email, 
-            users_password, 
-            users_organization_id], (err, results) => {
-                if (err) {
-                    res.send("An error occurred", + err);
-                } else {
-                    res.send({"status": 200, "error": null, "response": results});
-                }
+        bcrypt.hash(users_password, saltRounds, (err, hash) => {
+            const sqlScript = "INSERT INTO users(users_first_name, users_last_name, users_role, users_email, users_password, users_organization_id) VALUES(?, ?, ?, ?, ?, ?)";
+            dbConn.query(sqlScript, 
+                [users_first_name,
+                users_last_name,
+                users_role, 
+                users_email, 
+                hash, 
+                users_organization_id], (err, results) => {
+                    if (err) {
+                        res.send("An error occurred", + err);
+                    } else {
+
+                        dbConn.query("SELECT LAST_INSERT_ID() as user_id", (errors, results) => {
+                            const user_id = results[0];
+                            req.login(user_id, err => {
+                                res.send({"status": 200, "error": null, "response": results});
+                            })
+                        })
+                    }
+            })
         })
       }
     })
 
 }
+
+passport.serializeUser((user_id, done) => {
+    done(null, user_id);
+});
+
+passport.deserializeUser((user_id, done) => {
+    done(null, user_id);
+})
 
 module.exports = usersRouter;
