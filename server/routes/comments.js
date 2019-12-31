@@ -1,12 +1,13 @@
 const mysql = require('mysql');
 const db = require('../db');
+const verify = require("./verifyToken");
 
 dbConn = mysql.createConnection(db);
 
 
 function commentsRouter(app) {
     //get comments 
-    app.get("/comments/bug/:id", (req, res) => {
+    app.get("/comments/bug/:id", verify, (req, res) => {
         dbConn.query("SELECT * FROM comments WHERE comments_bugs_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred." + err);
@@ -17,7 +18,7 @@ function commentsRouter(app) {
     });
 
     //get a specific comment
-    app.get("/comment/:id", (req, res) => {
+    app.get("/comment/:id", verify, (req, res) => {
         dbConn.query("SELECT * FROM comments WHERE comments_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred." + err);
@@ -29,7 +30,7 @@ function commentsRouter(app) {
 
     //get comments from a specific user 
 
-    app.get("/comments/user/:id", (req, res) => {
+    app.get("/comments/user/:id", verify, (req, res) => {
         dbConn.query("SELECT * FROM comments WHERE comments_users_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);
@@ -41,7 +42,7 @@ function commentsRouter(app) {
 
     //creating a comment 
 
-    app.post("/comments", (req, res) => {
+    app.post("/comments", verify, (req, res) => {
         let commentData = {
             comments_users_id : req.body.comments_users_id,
             comments_bugs_id : req.body.comments_bugs_id,
@@ -60,7 +61,7 @@ function commentsRouter(app) {
 
     //Updating a comment 
 
-    app.put("/comment/:id", (req, res) => {
+    app.put("/comment/:id", verify, (req, res) => {
         let commentData = {
             comments_users_id : req.body.comments_users_id,
             comments_bugs_id : req.body.comments_bugs_id,
@@ -80,7 +81,7 @@ function commentsRouter(app) {
 
     //Deleting a comment 
  
-    app.delete("/comment/:id", (req, res) => {
+    app.delete("/comment/:id", verify, (req, res) => {
         dbConn.query("DELETE FROM comments WHERE comments_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred when deleting the bug." + err);

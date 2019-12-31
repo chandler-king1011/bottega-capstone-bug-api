@@ -1,18 +1,18 @@
 const mysql = require('mysql');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
-const passport = require('passport');
+const jwt = require("jsonwebtoken");
+const verify = require("./verifyToken");
+
+require('dotenv').config();
 
 const saltRounds = 10;
 
 const db = require('../db');
-
 dbConn = mysql.createConnection(db);
 
 function usersRouter(app) {
-
-
-    app.get("/users/organization/:id", (req, res) => {
+    app.get("/users/organization/:id", verify, (req, res) => {
         let sqlScript = "SELECT users_first_name, users_last_name, users_role FROM users WHERE users_organization_id = ?";
         dbConn.query(sqlScript, [req.params.id], (err, results)=> {
             if (err) {
@@ -22,6 +22,40 @@ function usersRouter(app) {
             }
         })
     })
+
+    // Login
+
+    app.post('/users/login',         
+    [check('email', 'Users email field cannot be empty.').notEmpty(),
+    check('email', 'The email you entered was invalid. Please try again.').isEmail()],
+    (req, res) => {
+        const validationErrors = validationResult(req);
+        if (!validationErrors.isEmpty()) {
+            res.send({"title": "Invalid Input", "errors": validationErrors});
+        } else {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        dbConn.query("SELECT users_password, users_id, users_first_name, users_last_name, users_role FROM users WHERE users_email = ?",
+        [email], (err, results) => {
+            if (err) {
+                res.send({"status": 400, "message": "Email or Password is invalid", "error": err});
+            } else {
+                bcrypt.compare(password, results[0].users_password, (error, resolve) => {
+                    if (resolve === true) {
+                        const token = jwt.sign({id: results[0].users_id}, process.env.TOKEN_SECRET);
+                        res.header("auth-token", token);
+                        res.send({"status": 200, "message": "success"});
+                    }
+                    if (resolve === false) {
+                        res.send({"status": 400, "message": "Invalid Password"})
+                    }
+                });
+            }
+        })
+      }
+    });
+
     // registering a user
     app.post("/users/register", [        
         check('users_first_name', 'Users Name field cannot be empty.').notEmpty(),
@@ -53,29 +87,16 @@ function usersRouter(app) {
                 hash, 
                 users_organization_id], (err, results) => {
                     if (err) {
-                        res.send("An error occurred", + err);
+                        res.send({"status": 400, message: err });
                     } else {
-
-                        dbConn.query("SELECT LAST_INSERT_ID() as user_id", (errors, results) => {
-                            const user_id = results[0];
-                            req.login(user_id, err => {
-                                res.send({"status": 200, "error": null, "response": results});
-                            })
-                        })
+                        res.send({"status": 200, message: results});
                     }
+                })
             })
-        })
-      }
-    })
+        }
+    });
 
 }
 
-passport.serializeUser((user_id, done) => {
-    done(null, user_id);
-});
-
-passport.deserializeUser((user_id, done) => {
-    done(null, user_id);
-})
 
 module.exports = usersRouter;

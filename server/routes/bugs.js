@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const db = require('../db');
+const verify = require("./verifyToken");
 
 dbConn = mysql.createConnection(db);
 
@@ -7,7 +8,7 @@ dbConn = mysql.createConnection(db);
 function bugsRouter(app) {
 
     //Get all bugs for org.
-    app.get("/bugs/organization/:id", (req, res) => {
+    app.get("/bugs/organization/:id", verify, (req, res) => {
         dbConn.query(`SELECT * FROM bugs WHERE bugs_organization_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("Failed to retrieve bugs from the database." + err);
@@ -19,7 +20,7 @@ function bugsRouter(app) {
     });
 
     //Get one bug with bug id.
-    app.get("/bug/:id", (req, res) => {
+    app.get("/bug/:id", verify, (req, res) => {
         dbConn.query("SELECT * FROM bugs WHERE bugs_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);
@@ -31,7 +32,7 @@ function bugsRouter(app) {
 
     //Get bugs assigned to a specific user. 
 
-    app.get("/bugs/user/:id", (req, res) => {
+    app.get("/bugs/user/:id", verify, (req, res) => {
         dbConn.query("SELECT * FROM bugs WHERE bugs_assigned_id = ?", [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);
@@ -41,7 +42,7 @@ function bugsRouter(app) {
         });
     });
 
-    app.post('/bugs', (req, res) => {
+    app.post('/bugs', verify, (req, res) => {
         let bugData = {
             bugs_title: req.body.bugs_title, 
             bugs_image_one: req.body.bugs_image_one, 
@@ -66,7 +67,7 @@ function bugsRouter(app) {
         })
     });
 
-    app.put('/bug/:id', (req, res) => {
+    app.put('/bug/:id', verify, (req, res) => {
         let bugData = {
             bugs_title: req.body.bugs_title, 
             bugs_image_one: req.body.bugs_image_one, 
@@ -93,7 +94,7 @@ function bugsRouter(app) {
     });
 
 
-    app.delete('/bug/:id', (req, res) => {
+    app.delete('/bug/:id', verify, (req, res) => {
         let sqlScript = "DELETE FROM bugs WHERE bugs_id = ?";
 
         dbConn.query(sqlScript, [req.params.id], (err, results) => {
