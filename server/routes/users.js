@@ -137,7 +137,17 @@ function usersRouter(app) {
         }
     });
 
-
+    app.put("/users/leave-org/:id", verify, (req, res) => {
+        const userId = req.params.id;
+        dbConn.query("UPDATE users SET users_organization_id = null WHERE users_id = ?", [userId],
+        (err, results) => {
+            if (err) {
+                res.send({"status": 400, "message": results, "error": err});
+            } else {
+                res.send({"status": 200, "message": results});
+            }
+        })
+    });
 
 
 }
