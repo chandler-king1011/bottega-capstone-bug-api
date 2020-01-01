@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const bugsRouter = require('./routes/bugs');
 const commentsRouter = require('./routes/comments');
 const usersRouter = require('./routes/users');
+const organizationRouter = require('./routes/organization');
 
 
 
@@ -31,6 +32,7 @@ app.listen(port, () => {
 bugsRouter(app);
 commentsRouter(app);
 usersRouter(app);
+organizationRouter(app);
 
 
 

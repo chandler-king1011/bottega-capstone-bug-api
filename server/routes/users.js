@@ -26,9 +26,10 @@ function usersRouter(app) {
     // Login
 
     app.post('/users/login',         
-    [check('email', 'Users email field cannot be empty.').notEmpty(),
-    check('email', 'The email you entered was invalid. Please try again.').isEmail()],
-    (req, res) => {
+    [
+      check('email', 'Users email field cannot be empty.').notEmpty(),
+      check('email', 'The email you entered was invalid. Please try again.').isEmail()
+    ], (req, res) => {
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
             res.send({"title": "Invalid Input", "errors": validationErrors});
@@ -87,6 +88,46 @@ function usersRouter(app) {
                 hash, 
                 users_organization_id], (err, results) => {
                     if (err) {
+                        res.send({"status": 400, "message": err });
+                    } else {
+                        res.send({"status": 200, "message": results});
+                    }
+                })
+            })
+        }
+    });
+
+
+    app.put("/users/update/:id", 
+    [        
+        check('users_first_name', 'Users Name field cannot be empty.').notEmpty(),
+        check('users_last_name', 'Users Name field cannot be empty.').notEmpty(),
+        check('users_email', 'Users email field cannot be empty.').notEmpty(),
+        check('users_email', 'Email address must be between 4-100 characters long').isLength({min: 4, max: 100}),
+        check('users_email', 'The email you entered was invalid. Please try again.').isEmail(),
+        check('users_password', 'Password must be between 8-100 characters long').isLength({min: 8, max: 100}),
+        check('users_password', 'Password must contain one lowercase, one uppercase, a number, and a special character.')
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+    ], (req, res) => {
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+            res.send({"title": "Invalid Input", "errors": validationErrors});
+        } else {
+            let {users_first_name, users_last_name, users_role, users_email, users_organization_id} = req.body;
+            let users_password = req.body.users_password;
+            bcrypt.hash(users_password, saltRounds, (err, hash) => {
+                let sqlScript = "UPDATE users SET ? WHERE users_id = ?";
+                let userData = {
+                    users_first_name: users_first_name,
+                    users_last_name: users_last_name,
+                    users_role: users_role,
+                    users_email: users_email,
+                    users_organization_id: users_organization_id,
+                    users_password: hash
+                };
+                dbConn.query(sqlScript, [userData, req.params.id], (err, results) => {
+                    if (err) {
                         res.send({"status": 400, message: err });
                     } else {
                         res.send({"status": 200, message: results});
@@ -95,6 +136,9 @@ function usersRouter(app) {
             })
         }
     });
+
+
+
 
 }
 
