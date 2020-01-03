@@ -37,7 +37,7 @@ function usersRouter(app) {
         const email = req.body.email;
         const password = req.body.password;
 
-        dbConn.query("SELECT users_password, users_id, users_first_name, users_last_name, users_role FROM users WHERE users_email = ?",
+        dbConn.query("SELECT users_password, users_organization_id, users_email, users_id, users_first_name, users_last_name, users_role FROM users WHERE users_email = ?",
         [email], (err, results) => {
             if (err) {
                 res.send({"status": 400, "message": "Email or Password is invalid", "error": err});
@@ -46,7 +46,14 @@ function usersRouter(app) {
                     if (resolve === true) {
                         const token = jwt.sign({id: results[0].users_id}, process.env.TOKEN_SECRET);
                         res.header("auth-token", token);
-                        res.send({"status": 200, "message": "success"});
+                        res.send({"status": 200, "message": "success", "results": {
+                            users_first_name: results[0].users_first_name,
+                            users_last_name: results[0].users_last_name,
+                            users_role: results[0].users_role,
+                            users_id: results[0].users_id,
+                            users_email: results[0].users_email,
+                            users_organization_id: results[0].users_organization_id
+                        }});
                     }
                     if (resolve === false) {
                         res.send({"status": 400, "message": "Invalid Password"})
@@ -139,7 +146,11 @@ function usersRouter(app) {
 
     app.put("/users/leave-org/:id", verify, (req, res) => {
         const userId = req.params.id;
-        dbConn.query("UPDATE users SET users_organization_id = null WHERE users_id = ?", [userId],
+        const updateData = {
+            users_organization_id: null,
+            users_role: "Tester"
+        }
+        dbConn.query("UPDATE users SET ? WHERE users_id = ?", [updateData, userId],
         (err, results) => {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err});

@@ -56,7 +56,7 @@ function organizationRouter(app) {
                     if (err) {
                         res.send({"status": 400, "message": err })
                     } else {
-                        dbConn.query("SELECT LAST_INSERT_ID() as orgID FROM organization", (err, results) => {
+                        dbConn.query("SELECT organization_id as orgID FROM organization WHERE organization_creator_id = ?", [organization_creator_id], (err, results) => {
                             if(err) {
                                 res.send({"status": 400, "message": err })
                             } else {
@@ -97,7 +97,7 @@ function organizationRouter(app) {
             const organizationName = req.body.organizationName;
             const password = req.body.password;
 
-            dbConn.query("SELECT organization_password as hash, organization_id as orgID FROM organization WHERE organization_name = ?", 
+            dbConn.query("SELECT organization_password as hash, organization_id as orgID, organization_name as Name FROM organization WHERE organization_name = ?", 
             [organizationName], (err, results) => {
                 if (err) {
                     res.send({"status": 400, "message": "Organization Name, or Password was incorrect"});
