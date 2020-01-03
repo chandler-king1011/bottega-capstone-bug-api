@@ -42,7 +42,7 @@ function bugsRouter(app) {
         });
     });
 
-    app.post('/bugs', verify, (req, res) => {
+    app.post("/bugs", verify, (req, res) => {
         let bugData = {
             bugs_title: req.body.bugs_title, 
             bugs_image_one: req.body.bugs_image_one, 

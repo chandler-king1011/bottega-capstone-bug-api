@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 
 
-app.use("/api,", usersRouter);
+app.use("/api", usersRouter);
 app.use("/api", bugsRouter);
 app.use("/api", commentsRouter);
 app.use("/api", organizationRouter);
