@@ -6,7 +6,7 @@ const verify = require("./verifyToken");
 
 
 const saltRounds = 10;
-dbConn = mysql.createConnection(db);
+dbConn = mysql.createPool(db);
 
 function organizationRouter(app) {
 

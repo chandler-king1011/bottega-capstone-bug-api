@@ -9,7 +9,7 @@ require('dotenv').config();
 const saltRounds = 10;
 
 const db = require('../db');
-dbConn = mysql.createConnection(db);
+dbConn = mysql.createPool(db);
 
 function usersRouter(app) {
     app.get("/users/organization/:id", verify, (req, res) => {

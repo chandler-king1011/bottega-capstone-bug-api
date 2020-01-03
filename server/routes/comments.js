@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const db = require('../db');
 const verify = require("./verifyToken");
 
-dbConn = mysql.createConnection(db);
+dbConn = mysql.createPool(db);
 
 
 function commentsRouter(app) {
