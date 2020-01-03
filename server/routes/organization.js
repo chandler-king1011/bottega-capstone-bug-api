@@ -22,13 +22,12 @@ function organizationRouter(app) {
         })
     });
 
-    app.get("/organization/names", verify, (req, res) => {
-        dbConn.query("SELECT organization_id, organization_name FROM organization",
-         (err, results) => {
+    app.get("/organizations", verify, (req, res) => {
+        const request = req;
+        dbConn.query("SELECT organization_id as ID, organization_name as 'Organization Name' FROM organization", (err, results) => {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err})
             } else {
-                console.log(results);
                 res.send(results);
             }
         })
