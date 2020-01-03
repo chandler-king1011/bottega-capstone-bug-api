@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon server/server.js -w server"
+    "start": "node server/server.js -w server"
   },
   "author": "Chandler King <ckmotox356@gmail.com> (https://www.npmjs.com/~chandler_king1011)",
   "license": "ISC",
@@ -19,8 +19,9 @@
     "express-validator": "^6.3.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.17.1",
-    "nodemon": "^2.0.2",
-    "passport": "^0.4.1",
     "uuid": "^3.3.3"
+  },
+  "engines": {
+    "node": "12.14.0"
   }
 }
