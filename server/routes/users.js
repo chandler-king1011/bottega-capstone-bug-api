@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const verify = require("./verifyToken");
 
+
 require('dotenv').config();
 
 const saltRounds = 10;
@@ -16,7 +17,7 @@ function usersRouter(app) {
         let sqlScript = "SELECT users_first_name, users_last_name, users_role FROM users WHERE users_organization_id = ?";
         dbConn.query(sqlScript, [req.params.id], (err, results)=> {
             if (err) {
-                res.send("An error occurred." + err);
+                res.header("Access-Control-Allow-Origin", "*").send("An error occurred." + err);
             } else {
                 res.send(results);
             }
@@ -45,8 +46,9 @@ function usersRouter(app) {
                 bcrypt.compare(password, results[0].users_password, (error, resolve) => {
                     if (resolve === true) {
                         const token = jwt.sign({id: results[0].users_id}, process.env.TOKEN_SECRET);
-                        res.header("auth-token", token);
-                        res.send({"status": 200, "message": "success", "results": {
+                        res.header("Access-Control-Allow-Origin", "*");
+                        res.header("auth-token", token)
+                        .send({"status": 200, "message": "success", "results": {
                             users_first_name: results[0].users_first_name,
                             users_last_name: results[0].users_last_name,
                             users_role: results[0].users_role,
@@ -54,6 +56,7 @@ function usersRouter(app) {
                             users_email: results[0].users_email,
                             users_organization_id: results[0].users_organization_id
                         }});
+                        
                     }
                     if (resolve === false) {
                         res.send({"status": 400, "message": "Invalid Password"})
@@ -97,7 +100,7 @@ function usersRouter(app) {
                     if (err) {
                         res.send({"status": 400, "message": err });
                     } else {
-                        res.send({"status": 200, "message": results});
+                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
                     }
                 })
             })
@@ -137,7 +140,7 @@ function usersRouter(app) {
                     if (err) {
                         res.send({"status": 400, message: err });
                     } else {
-                        res.send({"status": 200, message: results});
+                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, message: results});
                     }
                 })
             })
@@ -155,7 +158,7 @@ function usersRouter(app) {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err});
             } else {
-                res.send({"status": 200, "message": results});
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
             }
         })
     });

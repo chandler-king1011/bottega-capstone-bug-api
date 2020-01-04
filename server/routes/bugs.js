@@ -14,7 +14,7 @@ function bugsRouter(app) {
                 res.send("Failed to retrieve bugs from the database." + err);
             }
             else {
-            res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
           }
         });
     });
@@ -25,7 +25,7 @@ function bugsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-            res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
         }
         });
     });
@@ -37,7 +37,7 @@ function bugsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-                res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
             } 
         });
     });
@@ -62,7 +62,7 @@ function bugsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results})
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results})
             }
         })
     });
@@ -88,7 +88,7 @@ function bugsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results})
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results})
             }
         })
     });
@@ -101,7 +101,7 @@ function bugsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results});
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results});
             }
         })
 

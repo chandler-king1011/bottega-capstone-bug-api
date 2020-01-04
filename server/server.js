@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyparser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+
 
 
 
@@ -16,15 +16,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyparser.json());
 app.use(cookieParser());
-app.use(cors());
 
 
 
 
-app.use("/api", cors(), usersRouter);
-app.use("/api", cors(), bugsRouter);
-app.use("/api", cors(), commentsRouter);
-app.use("/api", cors(), organizationRouter);
+app.use("/api", usersRouter);
+app.use("/api", bugsRouter);
+app.use("/api", commentsRouter);
+app.use("/api", organizationRouter);
 
 
 

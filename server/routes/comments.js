@@ -12,7 +12,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred." + err);
             } else{
-                res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
             }
         });
     });
@@ -23,7 +23,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred." + err);
             } else {
-                res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
             }
         })
     })
@@ -35,7 +35,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
-                res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
             }
         })
     })
@@ -54,7 +54,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred posting your comment" + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results});
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results});
             }
         })
     })
@@ -74,7 +74,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred while updating the comment." + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results});
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results});
             }
         })
     })
@@ -86,7 +86,7 @@ function commentsRouter(app) {
             if (err) {
                 res.send("An error occurred when deleting the bug." + err);
             } else {
-                res.send({"status": 200, "error": null, "response": results})
+                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "error": null, "response": results})
             }
         })
     })

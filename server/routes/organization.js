@@ -17,7 +17,7 @@ function organizationRouter(app) {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err})
             } else {
-                res.send(results[0]);
+                res.header("Access-Control-Allow-Origin", "*").send(results[0]);
             }
         })
     });
@@ -28,7 +28,7 @@ function organizationRouter(app) {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err})
             } else {
-                res.send(results);
+                res.header("Access-Control-Allow-Origin", "*").send(results);
             }
         })
     });
@@ -70,7 +70,7 @@ function organizationRouter(app) {
                                     if (err){
                                         res.send({"status": 400, "message": results, "error": err});
                                     } else {
-                                        res.send({"status": 200, "message": results});
+                                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
                                     }
                                 })
                             }
@@ -112,7 +112,7 @@ function organizationRouter(app) {
                                 if (err) {
                                     res.send({"status": 400, "message": results, "error": err});
                                 } else {
-                                    res.send({"status": 200, "message": results});
+                                    res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
                                 }
                             })
                         }
@@ -153,7 +153,7 @@ function organizationRouter(app) {
                     if (err) {
                         res.send({"status": 400, "message": results, "error": err });
                     } else {
-                        res.send({"status": 200, "message": results});
+                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
                     }
                 })
             })
