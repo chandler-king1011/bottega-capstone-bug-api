@@ -17,7 +17,7 @@ function usersRouter(app) {
         let sqlScript = "SELECT users_first_name, users_last_name, users_role FROM users WHERE users_organization_id = ?";
         dbConn.query(sqlScript, [req.params.id], (err, results)=> {
             if (err) {
-                res.header("Access-Control-Allow-Origin", "*").send("An error occurred." + err);
+                res.send("An error occurred." + err);
             } else {
                 res.send(results);
             }
@@ -46,7 +46,6 @@ function usersRouter(app) {
                 bcrypt.compare(password, results[0].users_password, (error, resolve) => {
                     if (resolve === true) {
                         const token = jwt.sign({id: results[0].users_id}, process.env.TOKEN_SECRET);
-                        res.header("Access-Control-Allow-Origin", "*");
                         res.header("auth-token", token)
                         .send({"status": 200, "message": "success", "results": {
                             users_first_name: results[0].users_first_name,
@@ -100,7 +99,7 @@ function usersRouter(app) {
                     if (err) {
                         res.send({"status": 400, "message": err });
                     } else {
-                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
+                        res.send({"status": 200, "message": results});
                     }
                 })
             })
@@ -140,7 +139,7 @@ function usersRouter(app) {
                     if (err) {
                         res.send({"status": 400, message: err });
                     } else {
-                        res.header("Access-Control-Allow-Origin", "*").send({"status": 200, message: results});
+                        res.send({"status": 200, message: results});
                     }
                 })
             })
@@ -158,7 +157,7 @@ function usersRouter(app) {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err});
             } else {
-                res.header("Access-Control-Allow-Origin", "*").send({"status": 200, "message": results});
+                res.send({"status": 200, "message": results});
             }
         })
     });
