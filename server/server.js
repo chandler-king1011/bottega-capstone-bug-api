@@ -21,10 +21,10 @@ app.use(cors());
 
 
 
-app.use("/api", usersRouter);
-app.use("/api", bugsRouter);
-app.use("/api", commentsRouter);
-app.use("/api", organizationRouter);
+app.use("/api", cors(), usersRouter);
+app.use("/api", cors(), bugsRouter);
+app.use("/api", cors(), commentsRouter);
+app.use("/api", cors(), organizationRouter);
 
 
 
