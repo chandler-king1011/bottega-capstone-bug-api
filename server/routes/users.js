@@ -82,7 +82,7 @@ function usersRouter(app) {
         const validationErrors = validationResult(req);
 
         if (!validationErrors.isEmpty()) {
-            res.send({"title": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors});
         } else {
 
         let {users_first_name, users_last_name, users_role, users_email, users_organization_id} = req.body;
@@ -121,7 +121,7 @@ function usersRouter(app) {
         const validationErrors = validationResult(req);
 
         if (!validationErrors.isEmpty()) {
-            res.send({"title": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors});
         } else {
             let {users_first_name, users_last_name, users_role, users_email, users_organization_id} = req.body;
             let users_password = req.body.users_password;
