@@ -97,7 +97,7 @@ function usersRouter(app) {
                 hash, 
                 users_organization_id], (err, results) => {
                     if (err) {
-                        res.send({"status": 400, "message": err });
+                        res.send({"title": "Duplicate Email", "status": 400, "message": err });
                     } else {
                         res.send({"status": 200, "message": results});
                     }
