@@ -54,7 +54,7 @@ function usersRouter(app) {
                             users_id: results[0].users_id,
                             users_email: results[0].users_email,
                             users_organization_id: results[0].users_organization_id
-                        }});
+                        }, "token": token});
                         
                     }
                     if (resolve === false) {
