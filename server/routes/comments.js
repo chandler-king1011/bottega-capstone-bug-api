@@ -8,7 +8,12 @@ dbConn = mysql.createPool(db);
 function commentsRouter(app) {
     //get comments 
     app.get("/comments/bug/:id", verify, (req, res) => {
-        dbConn.query("SELECT * FROM comments WHERE comments_bugs_id = ?", [req.params.id], (err, results) => {
+        dbConn.query(`
+        SELECT c.*, u.users_first_name, u.users_last_name, u.users_role
+        FROM comments c
+        JOIN users u
+        ON u.users_id = c.comments_users_id
+        WHERE comments_bugs_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred." + err);
             } else{
@@ -19,7 +24,12 @@ function commentsRouter(app) {
 
     //get a specific comment
     app.get("/comment/:id", verify, (req, res) => {
-        dbConn.query("SELECT * FROM comments WHERE comments_id = ?", [req.params.id], (err, results) => {
+        dbConn.query(`
+        SELECT c.*, u.users_first_name, u.users_last_name, u.users_role
+        FROM comments c
+        JOIN users u
+        ON u.users_id = c.comments_users_id
+        WHERE comments_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred." + err);
             } else {

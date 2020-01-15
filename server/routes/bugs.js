@@ -9,7 +9,12 @@ function bugsRouter(app) {
 
     //Get all bugs for org.
     app.get("/bugs/organization/:id", verify, (req, res) => {
-        dbConn.query(`SELECT * FROM bugs WHERE bugs_organization_id = ?`, [req.params.id], (err, results) => {
+        dbConn.query(`
+        SELECT b.*, u.users_first_name, u.users_last_name, u.users_role
+        FROM bugs b
+        JOIN users u
+        ON u.users_id= b.bugs_assigned_id
+        WHERE bugs_organization_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("Failed to retrieve bugs from the database." + err);
             }
@@ -21,7 +26,12 @@ function bugsRouter(app) {
 
     //Get one bug with bug id.
     app.get("/bug/:id", verify, (req, res) => {
-        dbConn.query("SELECT * FROM bugs WHERE bugs_id = ?", [req.params.id], (err, results) => {
+        dbConn.query(`
+        SELECT b.*, u.users_first_name, u.users_last_name, u.users_role
+        FROM bugs b
+        JOIN users u
+        ON u.users_id= b.bugs_assigned_id
+        WHERE bugs_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
@@ -33,7 +43,12 @@ function bugsRouter(app) {
     //Get bugs assigned to a specific user. 
 
     app.get("/bugs/user/:id", verify, (req, res) => {
-        dbConn.query("SELECT * FROM bugs WHERE bugs_assigned_id = ?", [req.params.id], (err, results) => {
+        dbConn.query(`
+        SELECT b.*, u.users_first_name, u.users_last_name, u.users_role
+        FROM bugs b
+        JOIN users u
+        ON u.users_id= b.bugs_assigned_id
+        WHERE bugs_assigned_id = ?`, [req.params.id], (err, results) => {
             if (err) {
                 res.send("An error occurred" + err);
             } else {
