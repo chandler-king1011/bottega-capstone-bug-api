@@ -14,7 +14,8 @@ function bugsRouter(app) {
         FROM bugs b
         JOIN users u
         ON u.users_id= b.bugs_assigned_id
-        WHERE bugs_organization_id = ?`, [req.params.id], (err, results) => {
+        WHERE bugs_organization_id = ? 
+        `, [req.params.id], (err, results) => {
             if (err) {
                 res.send("Failed to retrieve bugs from the database." + err);
             }
