@@ -72,12 +72,7 @@ function commentsRouter(app) {
     //Updating a comment 
 
     app.put("/comment/:id", verify, (req, res) => {
-        let commentData = {
-            comments_users_id : req.body.comments_users_id,
-            comments_bugs_id : req.body.comments_bugs_id,
-            comments_text : req.body.comments_text,
-            comments_created_date : req.body.comments_created_date
-        }
+        let commentData = req.body;
         let sqlScript = "UPDATE comments SET ? WHERE comments_id = ?";
 
         dbConn.query(sqlScript, [commentData, req.params.id], (err, results) => {
