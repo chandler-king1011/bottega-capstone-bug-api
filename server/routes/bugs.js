@@ -85,7 +85,7 @@ function bugsRouter(app) {
 
     app.put('/bug/:id', verify, (req, res) => {
         let bugData = req.body;
-        let sqlScript = "UPDATE bugs SET ? WHERE bugs_id = ?";
+        let sqlScript = `UPDATE bugs SET ? WHERE bugs_id = ?`;
 
         dbConn.query(sqlScript, [bugData, req.params.id], (err, results) => {
             if (err) {
@@ -98,7 +98,7 @@ function bugsRouter(app) {
 
 
     app.delete('/bug/:id', verify, (req, res) => {
-        let sqlScript = "DELETE FROM bugs WHERE bugs_id = ?";
+        let sqlScript = `DELETE FROM bugs WHERE bugs_id = ?`;
 
         dbConn.query(sqlScript, [req.params.id], (err, results) => {
             if (err) {
