@@ -83,6 +83,18 @@ function bugsRouter(app) {
             })
     })
 
+    app.post("/search/user-bugs/:id", verify, (req, res) => {
+        dbConn.query(
+            `SELECT * FROM bugs WHERE bugs_description OR bugs_title LIKE "%${req.body.query}%" AND bugs_assigned_id = ?`,
+             [req.params.id], (err, results) => {
+                if (err) {
+                    res.send("An error occurred" + err);
+                } else {
+                    res.send(results)
+                }
+            })
+    })
+
 
 
     app.post("/bugs", verify, (req, res) => {
