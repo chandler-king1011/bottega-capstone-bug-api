@@ -1,8 +1,19 @@
 const mysql = require('mysql');
 const db = require('../db');
 const verify = require("./verifyToken");
+const cloudinary = require('cloudinary').v2;
+
+
 
 dbConn = mysql.createPool(db);
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
+})
+
+
+
 
 
 function bugsRouter(app) {
@@ -58,13 +69,27 @@ function bugsRouter(app) {
         });
     });
 
+    //get bugs with a query.
+
+    app.post("/search/organization-bugs/:id", verify, (req, res) => {
+        dbConn.query(
+            `SELECT * FROM bugs WHERE bugs_description OR bugs_title LIKE "%${req.body.query}%" AND bugs_organization_id = ?`,
+             [req.params.id], (err, results) => {
+                if (err) {
+                    res.send("An error occurred" + err);
+                } else {
+                    res.send(results)
+                }
+            })
+    })
+
+
+
     app.post("/bugs", verify, (req, res) => {
-        let bugData = {
+        var bugData = {
             bugs_title: req.body.bugs_title, 
-            bugs_image_one: req.body.bugs_image_one, 
-            bugs_image_two: req.body.bugs_image_two,
-            bugs_image_three: req.body.bugs_image_three,
-            bugs_image_four: req.body.bugs_image_four,
+            bugs_image_one: null,
+            bugs_image_two: null,
             bugs_status: req.body.bugs_status,
             bugs_severity: req.body.bugs_severity,
             bugs_replicable: req.body.bugs_replicable,
@@ -73,15 +98,49 @@ function bugsRouter(app) {
             bugs_description: req.body.bugs_description,
             bugs_organization_id: req.body.bugs_organization_id
         };
-        let sqlScript = "INSERT INTO bugs SET ?";
-        dbConn.query(sqlScript, bugData, (err, results) => {
-            if (err) {
-                res.send("An error occurred" + err);
-            } else {
-                res.send({"status": 200, "error": null, "response": results})
-            }
+
+        
+    const imageOne = new Promise((resolve, reject) => {
+                if (req.files.bugs_image_one != null) {
+                cloudinary.uploader.upload(req.files.bugs_image_one.tempFilePath, (error, result) => {
+                if (error) {reject();}
+                else {
+                    bugData.bugs_image_one = result.secure_url
+                    resolve(bugData);
+                } 
+                
+            })
+        } else{ resolve(bugData);}
+    })
+
+    const imageTwo = new Promise((resolve, reject) => {
+        if (req.files.bugs_image_two != null) {
+        cloudinary.uploader.upload(req.files.bugs_image_two.tempFilePath, (error, result) => {
+        if (error) {reject();}
+        else {
+            bugData.bugs_image_two = result.secure_url
+            resolve(bugData);
+        } 
+        
+    })
+    } else{ resolve(bugData);}
+    })
+
+
+    Promise.all([imageOne, imageTwo]).then((result, error) => {
+        dbConn.query("INSERT INTO bugs SET ?", bugData, (err, results) => {
+                if (err) {
+                    res.send("An error occurred" + err);
+                } else {
+                    res.send({"status": 200, "error": null, "response": results})
+                }
+            })
+        }).catch(error => {
+            res.send(res.send("An error occurred" + error))
         })
     });
+
+
 
     app.put("/bug/:id", verify, (req, res) => {
         let bugData = req.body;
