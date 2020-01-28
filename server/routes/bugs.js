@@ -111,11 +111,12 @@ function bugsRouter(app) {
             bugs_organization_id: req.body.bugs_organization_id
         };
 
+
         
     const imageOne = new Promise((resolve, reject) => {
                 if (req.files.bugs_image_one != null) {
-                cloudinary.uploader.upload(req.files.bugs_image_one.tempFilePath, (error, result) => {
-                if (error) {reject();}
+                cloudinary.uploader.upload(req.files.bugs_image_one.tempFilePath, function (error, result) {
+                if (error) {reject(bugData);}
                 else {
                     bugData.bugs_image_one = result.secure_url
                     resolve(bugData);
@@ -127,29 +128,25 @@ function bugsRouter(app) {
 
     const imageTwo = new Promise((resolve, reject) => {
         if (req.files.bugs_image_two != null) {
-        cloudinary.uploader.upload(req.files.bugs_image_two.tempFilePath, (error, result) => {
-        if (error) {reject();}
-        else {
+        cloudinary.uploader.upload(req.files.bugs_image_two.tempFilePath, function (error, result) {
+            if (error) {reject(bugData);} else {
             bugData.bugs_image_two = result.secure_url
             resolve(bugData);
-        } 
-        
-    })
-    } else{ resolve(bugData);}
-    })
-
-
-    Promise.all([imageOne, imageTwo]).then((result, error) => {
-        dbConn.query("INSERT INTO bugs SET ?", bugData, (err, results) => {
-                if (err) {
-                    res.send("An error occurred" + err);
-                } else {
-                    res.send({"status": 200, "error": null, "response": results})
-                }
-            })
-        }).catch(error => {
-            res.send(res.send("An error occurred" + error))
+          }
         })
+    } else{resolve(bugData);}
+    })
+
+    Promise.all([imageOne, imageTwo])
+    .then(values => {
+        console.log(values);
+        res.send({"results": values});
+    })
+    .catch(error => {
+        res.send({"error": error});
+    })
+
+
     });
 
 
