@@ -98,7 +98,6 @@ function bugsRouter(app) {
 
 
     app.post("/bugs", verify, (req, res) => {
-        console.log(req);
         var bugData = {
             bugs_title: req.body.bugs_title, 
             bugs_image_one: null,
