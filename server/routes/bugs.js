@@ -98,6 +98,7 @@ function bugsRouter(app) {
 
 
     app.post("/bugs", verify, (req, res) => {
+        console.log(req);
         var bugData = {
             bugs_title: req.body.bugs_title, 
             bugs_image_one: null,
@@ -112,41 +113,53 @@ function bugsRouter(app) {
         };
 
 
-        
-    const imageOne = new Promise((resolve, reject) => {
-                if (req.files.bugs_image_one != null) {
-                cloudinary.uploader.upload(req.files.bugs_image_one.tempFilePath, function (error, result) {
-                if (error) {reject(bugData);}
-                else {
-                    bugData.bugs_image_one = result.secure_url
-                    resolve(bugData);
-                } 
-                
-            })
-        } else{ resolve(bugData);}
-    })
-
-    const imageTwo = new Promise((resolve, reject) => {
-        if (req.files.bugs_image_two != null) {
-        cloudinary.uploader.upload(req.files.bugs_image_two.tempFilePath, function (error, result) {
-            if (error) {reject(bugData);} else {
-            bugData.bugs_image_two = result.secure_url
-            resolve(bugData);
-          }
+    if (req.files === null) {
+        dbConn.query("INSERT INTO bugs SET ?", bugData, (err, results) => {
+            if (err) {
+                res.send("An error occurred" + err);
+            } else {
+                res.send({"status": 200, "error": null, "response": results})
+            }
         })
-    } else{resolve(bugData);}
-    })
+    } else {
+                    const imageOne = new Promise((resolve, reject) => {
+                        if (req.files.bugs_image_one != null) {
+                        cloudinary.uploader.upload(req.files.bugs_image_one.tempFilePath, function (error, result) {
+                        if (error) {reject(bugData);}
+                        else {
+                            bugData.bugs_image_one = result.secure_url
+                            resolve(bugData);
+                        } 
+                        
+                    })
+                } else{ resolve(bugData);}
+            })
 
-    Promise.all([imageOne, imageTwo])
-    .then(values => {
-        console.log(values);
-        res.send({"results": values});
-    })
-    .catch(error => {
-        res.send({"error": error});
-    })
+            const imageTwo = new Promise((resolve, reject) => {
+                if (req.files.bugs_image_two != null) {
+                cloudinary.uploader.upload(req.files.bugs_image_two.tempFilePath, function (error, result) {
+                    if (error) {reject(bugData);} else {
+                    bugData.bugs_image_two = result.secure_url
+                    resolve(bugData);
+                }
+                })
+            } else{resolve(bugData);}
+            })
 
-
+        Promise.all([imageOne, imageTwo])
+        .then(values => {
+            dbConn.query("INSERT INTO bugs SET ?", bugData, (err, results) => {
+                if (err) {
+                    res.send("An error occurred" + err);
+                } else {
+                    res.send({"status": 200, "error": null, "response": results})
+                }
+            })
+        })
+        .catch(error => {
+            res.send({"error": error, "status": 400});
+        })
+      }
     });
 
 
