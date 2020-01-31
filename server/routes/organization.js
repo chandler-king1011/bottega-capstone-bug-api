@@ -112,7 +112,21 @@ function organizationRouter(app) {
                                 if (err) {
                                     res.send({"status": 400, "message": results, "error": err});
                                 } else {
-                                    res.send({"status": 200, "message": results});
+                                    dbConn.query("SELECT * FROM users WHERE users_id = ?", [userId], (error, result) => {
+                                        if (error) {
+                                            res.send({"status": 400, "message": results, "error": err});
+                                        } else {
+                                            res.send({"status": 200, "results": {
+                                                users_first_name: result[0].users_first_name,
+                                                users_last_name: result[0].users_last_name,
+                                                users_role: result[0].users_role,
+                                                users_id: result[0].users_id,
+                                                users_email: result[0].users_email,
+                                                users_organization_id: result[0].users_organization_id
+                                            }})
+                                        }
+                                    })
+                                    
                                 }
                             })
                         }
