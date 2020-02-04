@@ -91,7 +91,7 @@ function organizationRouter(app) {
     ], (req, res) => {
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
-            res.send({"title": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "errors": validationErrors});
         } else {
             const userId = req.body.userId;
             const organizationName = req.body.organizationName;
