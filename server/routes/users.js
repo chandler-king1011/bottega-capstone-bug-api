@@ -113,10 +113,7 @@ function usersRouter(app) {
         check('users_last_name', 'Users Name field cannot be empty.').notEmpty(),
         check('users_email', 'Users email field cannot be empty.').notEmpty(),
         check('users_email', 'Email address must be between 4-100 characters long').isLength({min: 4, max: 100}),
-        check('users_email', 'The email you entered was invalid. Please try again.').isEmail(),
-        check('users_password', 'Password must be between 8-100 characters long').isLength({min: 8, max: 100}),
-        check('users_password', 'Password must contain one lowercase, one uppercase, a number, and a special character.')
-        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+        check('users_email', 'The email you entered was invalid. Please try again.').isEmail()
     ], (req, res) => {
         const validationErrors = validationResult(req);
 
@@ -124,8 +121,6 @@ function usersRouter(app) {
             res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors});
         } else {
             let {users_first_name, users_last_name, users_role, users_email, users_organization_id} = req.body;
-            let users_password = req.body.users_password;
-            bcrypt.hash(users_password, saltRounds, (err, hash) => {
                 let sqlScript = "UPDATE users SET ? WHERE users_id = ?";
                 let userData = {
                     users_first_name: users_first_name,
@@ -133,18 +128,22 @@ function usersRouter(app) {
                     users_role: users_role,
                     users_email: users_email,
                     users_organization_id: users_organization_id,
-                    users_password: hash
                 };
                 dbConn.query(sqlScript, [userData, req.params.id], (err, results) => {
                     if (err) {
-                        res.send({"status": 400, message: err });
+                        res.send({"status": 400, "message": err });
                     } else {
-                        res.send({"status": 200, message: results});
+                        dbConn.query("SELECT users_organization_id, users_email, users_id, users_first_name, users_last_name, users_role FROM users WHERE users_id = ?", 
+                        [req.params.id], (err, results) => {
+                            if (err) {
+                                res.send({"status": 400, "message": err });
+                            } else {res.send({"status": 200, "message": results});}
+                        })
                     }
                 })
-            })
-        }
-    });
+            }
+       });
+
 
     app.put("/users/leave-org/:id", verify, (req, res) => {
         const userId = req.params.id;
