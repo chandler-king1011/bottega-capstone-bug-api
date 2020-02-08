@@ -107,6 +107,54 @@ function usersRouter(app) {
     });
 
 
+
+    app.put("/users/update-password/:id", verify, 
+    [
+        check('newPassword', 'Password must be between 8-100 characters long').isLength({min: 8, max: 100}),
+        check('newPassword', 'Password must contain one lowercase, one uppercase, a number, and a special character.')
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+    ], (req, res) => {
+
+        const validationErrors = validationResult(req);
+        const newPassword = req.body.newPassword;
+        const currentPassword = req.body.currentPassword;
+
+        if (!validationErrors.isEmpty()) {
+            res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors});
+        } else {
+            dbConn.query("SELECT users_password FROM users WHERE users_id = ?",
+            [req.params.id], (err, results) => {
+                if (err) {
+                    res.send({"status": 400, "message": "ID or Password is invalid", "error": err});
+                } else {
+                    bcrypt.compare(currentPassword, results[0].users_password, (error, resolve) => {
+                        if (resolve === true) {
+                            bcrypt.hash(newPassword, saltRounds, (err, hash) => {
+
+                                dbConn.query("UPDATE users SET ? WHERE users_id = ?", [{users_password: hash}, req.params.id], (err, results) => {
+                                    if (err) {
+                                        res.send({"status": 400, "message": "Error updating password.", "error": err});
+                                    } else {
+                                        res.send({"status": 200, "message": "Password was updated successfully", "results": results})
+                                    }
+                                })
+
+                            })
+                        } else if(error) {
+                            res.send({"status": 400, "message": "Current Password is invalid", "error": err});
+                        } if (resolve === false) {
+                            res.send({"status": 400, "message": "Current Password is invalid", "error": err});
+                        }
+                    })
+                }
+            })
+        }
+    })
+
+
+
+
+
     app.put("/users/update/:id", 
     [        
         check('users_first_name', 'Users Name field cannot be empty.').notEmpty(),
