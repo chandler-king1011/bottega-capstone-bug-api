@@ -120,12 +120,12 @@ function usersRouter(app) {
         const currentPassword = req.body.currentPassword;
 
         if (!validationErrors.isEmpty()) {
-            res.send({"status": 400, "message": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "message": "Invalid input. Make sure your new password meets all of the required criteria.", "errors": validationErrors});
         } else {
             dbConn.query("SELECT users_password FROM users WHERE users_id = ?",
             [req.params.id], (err, results) => {
                 if (err) {
-                    res.send({"status": 400, "message": "ID or Password is invalid", "error": err});
+                    res.send({"status": 400, "message": "ID or Password is invalid.", "error": err});
                 } else {
                     bcrypt.compare(currentPassword, results[0].users_password, (error, resolve) => {
                         if (resolve === true) {
@@ -134,15 +134,15 @@ function usersRouter(app) {
                                     if (err) {
                                         res.send({"status": 400, "message": "Error updating password.", "error": err});
                                     } else {
-                                        res.send({"status": 200, "message": "Password was updated successfully", "results": results})
+                                        res.send({"status": 200, "message": "Password was updated successfully!", "results": results})
                                     }
                                 })
 
                             })
                         } else if(error) {
-                            res.send({"status": 400, "message": "Current Password is invalid", "error": err});
+                            res.send({"status": 400, "message": "Current Password is invalid.", "error": err});
                         } if (resolve === false) {
-                            res.send({"status": 400, "message": "Current Password is invalid", "error": err});
+                            res.send({"status": 400, "message": "Current Password is invalid.", "error": err});
                         }
                     })
                 }
