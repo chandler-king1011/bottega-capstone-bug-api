@@ -120,7 +120,7 @@ function usersRouter(app) {
         const currentPassword = req.body.currentPassword;
 
         if (!validationErrors.isEmpty()) {
-            res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "message": "Invalid Input", "errors": validationErrors});
         } else {
             dbConn.query("SELECT users_password FROM users WHERE users_id = ?",
             [req.params.id], (err, results) => {
@@ -130,7 +130,6 @@ function usersRouter(app) {
                     bcrypt.compare(currentPassword, results[0].users_password, (error, resolve) => {
                         if (resolve === true) {
                             bcrypt.hash(newPassword, saltRounds, (err, hash) => {
-
                                 dbConn.query("UPDATE users SET ? WHERE users_id = ?", [{users_password: hash}, req.params.id], (err, results) => {
                                     if (err) {
                                         res.send({"status": 400, "message": "Error updating password.", "error": err});
