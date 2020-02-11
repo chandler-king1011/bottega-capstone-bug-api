@@ -45,7 +45,7 @@ function organizationRouter(app) {
         const validationErrors = validationResult(req);
 
         if(!validationErrors.isEmpty()) {
-            res.send({"title": "Invalid Input", "errors": validationErrors});
+            res.send({"status": 400, "title": "Invalid Input", "errors": validationErrors, "message": "Password must contain one lowercase, one uppercase, a number, and a special character."});
         } else {
             const organization_password = req.body.organization_password;
             bcrypt.hash(organization_password, saltRounds, (err, hash) => {
@@ -54,11 +54,11 @@ function organizationRouter(app) {
                 const organizationData = [organization_name, hash, organization_creator_id];
                 dbConn.query(sqlScript, organizationData, (err, results) => {
                     if (err) {
-                        res.send({"status": 400, "message": err })
+                        res.send({"status": 400, "message": "An error occurred please try again.", "errors": err })
                     } else {
                         dbConn.query("SELECT organization_id as orgID FROM organization WHERE organization_creator_id = ?", [organization_creator_id], (err, results) => {
                             if(err) {
-                                res.send({"status": 400, "message": err })
+                                res.send({"status": 400, "message": "An error occurred please try again.", "errors": err  })
                             } else {
                                 const userUpdateScript = "UPDATE users SET ? WHERE users_id = ?";
                                 const userUpdateData = {
@@ -68,9 +68,9 @@ function organizationRouter(app) {
 
                                 dbConn.query(userUpdateScript, [userUpdateData, organization_creator_id], (err, results) => {
                                     if (err){
-                                        res.send({"status": 400, "message": results, "error": err});
+                                        res.send({"status": 400, "message": "An error occurred please try again.", "error": err});
                                     } else {
-                                        res.send({"status": 200, "message": results});
+                                        res.send({"status": 200, "results": userUpdateData, "message": results});
                                     }
                                 })
                             }
