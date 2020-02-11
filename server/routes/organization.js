@@ -9,10 +9,9 @@ const saltRounds = 10;
 dbConn = mysql.createPool(db);
 
 function organizationRouter(app) {
-
     app.get("/organization/:id", verify, (req, res) => {
         const orgId = req.params.id;
-        dbConn.query("SELECT organization_name as 'Organzation Name' FROM organization WHERE organization_id = ?",
+        dbConn.query("SELECT organization_name as 'Organization Name' FROM organization WHERE organization_id = ?",
         [orgId], (err, results) => {
             if (err) {
                 res.send({"status": 400, "message": results, "error": err})
