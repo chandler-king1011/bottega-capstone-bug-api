@@ -55,7 +55,7 @@ function organizationRouter(app) {
                     if (err) {
                         res.send({"status": 400, "message": "An error occurred please try again.", "errors": err })
                     } else {
-                        dbConn.query("SELECT organization_id as orgID FROM organization WHERE organization_creator_id = ?", [organization_creator_id], (err, results) => {
+                        dbConn.query("SELECT organization_id as orgID FROM organization WHERE organization_name = ?", [organization_name], (err, results) => {
                             if(err) {
                                 res.send({"status": 400, "message": "An error occurred please try again.", "errors": err  })
                             } else {
