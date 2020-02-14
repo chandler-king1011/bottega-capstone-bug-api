@@ -9,6 +9,7 @@
   "author": "Chandler King <ckmotox356@gmail.com> (https://www.npmjs.com/~chandler_king1011)",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^6.5.2",
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.19.0",
@@ -21,6 +22,7 @@
     "express-session": "^1.17.0",
     "express-validator": "^6.3.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mysql": "^2.17.1",
     "uuid": "^3.3.3"
   },
