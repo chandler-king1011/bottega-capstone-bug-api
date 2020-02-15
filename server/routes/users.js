@@ -147,7 +147,7 @@ function usersRouter(app) {
                         }
                     })
                 } else if (results.length === 0) {
-                    res.send({"status": 400, "message": "No such email please try again."})
+                    res.status(400).send({"message": "No such email please try again."})
                 }
             }
         })
