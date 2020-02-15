@@ -147,7 +147,7 @@ function usersRouter(app) {
                         }
                     })
                 } else if (results.length === 0) {
-                    res.send({"status": 400, "message": "No such email please try again."})
+                    res.status(500).send({"message": "No such email please try again."})
                 }
             }
         })
@@ -188,11 +188,11 @@ function usersRouter(app) {
         const newPassword = req.body.newPassword;
         const token = req.body.token;
         if (!validationErrors.isEmpty()) {
-            res.status(400).send({"message": "Invalid input. Make sure your new password meets all of the required criteria.", "errors": validationErrors});
+            res.status(500).send({"message": "Invalid input. Make sure your new password meets all of the required criteria.", "errors": validationErrors});
         } else {
             bcrypt.hash(newPassword, saltRounds, (err, hash) => {
                 if(err) {
-                    res.status(400).send({"message": "A problem occurred while hashing your password. Please try again.", "errors": err});
+                    res.status(500).send({"message": "A problem occurred while hashing your password. Please try again.", "errors": err});
                 } else {
                     const userUpdateData = {
                         users_password: hash,
