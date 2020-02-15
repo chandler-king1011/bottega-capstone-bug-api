@@ -163,15 +163,19 @@ function usersRouter(app) {
         [token], 
         (error, results) => {
             if (error) {
-                res.send({"status": 400, "message": "An error occurred verifying your token. Please try another reset password request."})
+                res.header({"Access-Control-Allow-Origin": "*"}).send({"status": 400, "message": "An error occurred verifying your token. Please try another reset password request."})
             } else {
+                if (results.length === 0) {
+                    res.header({"Access-Control-Allow-Origin": "*"}).send({"status": 400, "message": "Token is no longer valid."});
+                } else {
                 let now = moment().format();
                 if (moment(now).isBefore(results[0].reset_token_exp)) {
-                    res.send({"status": 200, "message": "Your token is still valid."});
+                    res.header({"Access-Control-Allow-Origin": "*"}).send({"status": 200, "message": "Your token is still valid."});
                 } else {
-                    res.send({"status": 400, "message": "Your token has expired"});
+                    res.header({"Access-Control-Allow-Origin": "*"}).send({"status": 400, "message": "Your token has expired"});
                 }
             }
+          }
         })
     })
 
