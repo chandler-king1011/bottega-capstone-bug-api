@@ -129,7 +129,7 @@ function usersRouter(app) {
                     [updateInfo, results[0].users_id],
                     (err, response) => {
                         if (err) {
-                            res.send({"status": 400, "message": "An error occurred please try again.", "errors": err})
+                            res.send({"status": 500, "message": "An error occurred please try again.", "errors": err})
                         } else {
                             sgMail.setApiKey(process.env.SENDGRID_API_KEY);
                             const msg = {
@@ -143,11 +143,11 @@ function usersRouter(app) {
                                   + 'If you did not request this email, please ignore this message and your password will remain the unchanged.'
                             };
                             sgMail.send(msg);
-                            res.status(200).send({"message": "An email has been sent to your email. Please refer to this email for further instruction."});
+                            res.send({"status": 200, "message": "An email has been sent to your email. Please refer to this email for further instruction."});
                         }
                     })
                 } else if (results.length === 0) {
-                    res.status(500).send({"message": "No such email please try again."})
+                    res.send({"status": 500, "message": "No such email please try again."})
                 }
             }
         })
@@ -163,13 +163,13 @@ function usersRouter(app) {
         [token], 
         (error, results) => {
             if (error) {
-                res.status(400).send({"message": "An error occurred verifying your token. Please try another reset password request."})
+                res.send({"status": 400, "message": "An error occurred verifying your token. Please try another reset password request."})
             } else {
                 let now = moment().format();
                 if (moment(now).isBefore(results[0].reset_token_exp)) {
-                    res.status(200).send({"message": "Your token is still valid."});
+                    res.send({"status": 200, "message": "Your token is still valid."});
                 } else {
-                    res.status(400).send({"message": "Your token has expired"});
+                    res.send({"status": 400, "message": "Your token has expired"});
                 }
             }
         })
@@ -188,11 +188,11 @@ function usersRouter(app) {
         const newPassword = req.body.newPassword;
         const token = req.body.token;
         if (!validationErrors.isEmpty()) {
-            res.status(500).send({"message": "Invalid input. Make sure your new password meets all of the required criteria.", "errors": validationErrors});
+            res.send({"status": 500, "message": "Invalid input. Make sure your new password meets all of the required criteria.", "errors": validationErrors});
         } else {
             bcrypt.hash(newPassword, saltRounds, (err, hash) => {
                 if(err) {
-                    res.status(500).send({"message": "A problem occurred while hashing your password. Please try again.", "errors": err});
+                    res.send({"status": 500, "message": "A problem occurred while hashing your password. Please try again.", "errors": err});
                 } else {
                     const userUpdateData = {
                         users_password: hash,
@@ -203,9 +203,9 @@ function usersRouter(app) {
                     [userUpdateData, token],
                     (error, results) => {
                         if (error) {
-                            res.status(400).send({"message": "Could not update your password. Please try again.", "errors": error});
+                            res.send({"status": 500, "message": "Could not update your password. Please try again.", "errors": error});
                         } else {
-                            res.status(200).send({"message": "Your password has been updated successfully. Return to the login page to login."})
+                            res.send({"status": 200, "message": "Your password has been updated successfully. Return to the login page to login."})
                         }
                     })
                 }
