@@ -45,7 +45,10 @@ function usersRouter(app) {
         [email], (err, results) => {
             if (err) {
                 res.send({"status": 400, "message": "Email or Password is invalid", "error": err});
-            } else {
+            } else if (results.length === 0) {
+                res.send({"status": 400, "message": "Email or Password is invalid"});
+            } 
+            else {
                 bcrypt.compare(password, results[0].users_password, (error, resolve) => {
                     if (resolve === true) {
                         const token = jwt.sign({id: results[0].users_id}, process.env.TOKEN_SECRET);
