@@ -137,12 +137,12 @@ function usersRouter(app) {
                             sgMail.setApiKey(process.env.SENDGRID_API_KEY);
                             const msg = {
                                 to: results[0].users_email,
-                                from: 'resetpassword@test.com',
+                                from: 'resetpassword@demo.com',
                                 subject: 'Bug Eliminator Password Reset Request',
                                 text: 
                                     'You are receiving this email because someone has requested to change the password for your account.\n\n'
                                   + 'Please use the following link to reset your password. This link will only be good for one hour \n\n'
-                                  + `http://localhost:3000/password/reset/${token}\n\n`
+                                  + `https://bug-eliminator.herokuapp.com/password/reset/${token}\n\n`
                                   + 'If you did not request this email, please ignore this message and your password will remain the unchanged.'
                             };
                             sgMail.send(msg);
